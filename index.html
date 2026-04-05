@@ -129,6 +129,7 @@
       <div class="kobeRight">
         <img src="./assets/kobe.jpg" alt="Kobe Bryant">
         <div class="cap">科比·布莱恩特（Kobe Bryant）</div>
+        <img id="kobePhoto" src="./assets/kobe.jpg" alt="Kobe Bryant">
       </div>
     </div>
   </section>
@@ -283,6 +284,30 @@
   </section>
 
 </div>
+<audio id="kobeAudio" src="./assets/kobe-voice.mp3" preload="auto"></audio>
+  <script>
+  const kobePhoto = document.getElementById('kobePhoto');
+  const kobeAudio = document.getElementById('kobeAudio');
 
+  kobePhoto.style.cursor = 'pointer'; // 鼠标提示可点击
+
+  kobePhoto.addEventListener('click', async () => {
+    try {
+      // 每次点击都从头播放
+      kobeAudio.pause();
+      kobeAudio.currentTime = 0;
+      await kobeAudio.play();
+    } catch (err) {
+      console.error('音频播放失败:', err);
+      alert('播放失败，请检查音频路径：./assets/kobe-voice.mp3');
+    }
+  });
+
+  // 播放完立即停止并归零
+  kobeAudio.addEventListener('ended', () => {
+    kobeAudio.pause();
+    kobeAudio.currentTime = 0;
+  });
+</script>
 </body>
 </html>
