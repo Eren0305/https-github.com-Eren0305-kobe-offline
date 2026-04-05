@@ -88,7 +88,7 @@
 <body>
 <div class="wrap">
     <!-- 背景音乐按钮 + 音频 + 脚本，放这里 -->
-<button id="musicBtn" class="music-btn" aria-label="播放背景音乐">🎵 播放音乐</button>
+<button id="musicBtn" class="music-btn" aria-label="播放背景音乐">🎵 see you again</button>
 <audio id="bgm" src="./assets/bgm.mp3" loop preload="auto"></audio>
 
 <script>
@@ -103,7 +103,7 @@
         musicBtn.setAttribute('aria-label', '暂停背景音乐');
       } else {
         bgm.pause();
-        musicBtn.textContent = '🎵 播放音乐';
+        musicBtn.textContent = '🎵 see you again';
         musicBtn.setAttribute('aria-label', '播放背景音乐');
       }
     } catch (err) {
