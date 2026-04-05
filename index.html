@@ -256,5 +256,32 @@
   </section>
 
 </div>
+  <!-- 背景音乐按钮 + 音频 + 脚本，放这里 -->
+<button id="musicBtn" class="music-btn" aria-label="播放背景音乐">🎵 播放音乐</button>
+<audio id="bgm" src="./assets/bgm.mp3" loop preload="auto"></audio>
+
+<script>
+  const musicBtn = document.getElementById('musicBtn');
+  const bgm = document.getElementById('bgm');
+
+  async function toggleMusic() {
+    try {
+      if (bgm.paused) {
+        await bgm.play();
+        musicBtn.textContent = '⏸ 暂停音乐';
+        musicBtn.setAttribute('aria-label', '暂停背景音乐');
+      } else {
+        bgm.pause();
+        musicBtn.textContent = '🎵 播放音乐';
+        musicBtn.setAttribute('aria-label', '播放背景音乐');
+      }
+    } catch (err) {
+      alert('音乐播放失败：请检查文件路径 ./assets/bgm.mp3 是否存在');
+      console.error(err);
+    }
+  }
+
+  musicBtn.addEventListener('click', toggleMusic);
+</script>
 </body>
 </html>
