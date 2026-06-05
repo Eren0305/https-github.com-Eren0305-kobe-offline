@@ -1,172 +1,1154 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9:45之后：一场可以被预见的坠毁</title>
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
-  <style>
-    :root{
-      --bg:#0b1220;
-      --panel:#111a2e;
-      --line:#1f2a44;
-      --text:#e6edf3;
-      --muted:#9fb0c8;
-      --info:#5aa9ff;
-      --warn:#ffb020;
-      --danger:#ff4d4f;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      line-height:1.7;
-    }
-    .hero{
-      min-height:68vh;
-      padding:90px 10% 70px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      background:
-        linear-gradient(180deg, rgba(255,77,79,.08), transparent 38%),
-        radial-gradient(circle at 70% 20%, rgba(255,77,79,.18), transparent 36%);
-      border-bottom:1px solid var(--line);
-    }
-    h1{
-      font-size:clamp(30px,5vw,56px);
-      line-height:1.15;
-      margin:0 0 18px;
-      letter-spacing:.5px;
-    }
-    .sub{
-      color:var(--muted);
-      max-width:880px;
-      font-size:18px;
-    }
-    section{
-      padding:64px 10%;
-      border-bottom:1px solid var(--line);
-    }
-    h2{
-      margin:0 0 18px;
-      font-size:30px;
-    }
-    .lead{
-      color:var(--muted);
-      margin-bottom:24px;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(180px,1fr));
-      gap:16px;
-    }
-    .card{
-      background:var(--panel);
-      border:1px solid #1b2742;
-      border-radius:12px;
-      padding:18px;
-      min-height:110px;
-    }
-    .card .k{
-      font-size:13px;color:var(--muted);
-      margin-bottom:8px;
-    }
-    .card .v{
-      font-size:22px;font-weight:700;
-    }
-    .danger{color:var(--danger)}
-    .warn{color:var(--warn)}
-    .info{color:var(--info)}
-    .chart{
-      width:100%;
-      height:420px;
-      background:var(--panel);
-      border:1px solid #1b2742;
-      border-radius:12px;
-    }
-    .timeline{
-      display:grid;
-      gap:10px;
-      margin-top:16px;
-    }
-    .timeline div{
-      background:var(--panel);
-      border-left:4px solid var(--danger);
-      padding:10px 12px;
-      border-radius:8px;
-    }
-    .footer-quote{
-      font-size:22px;
-      font-weight:700;
-      color:#fff;
-    }
-    @media (max-width:980px){
-      .grid{grid-template-columns:repeat(2,minmax(160px,1fr))}
-    }
-    @media (max-width:600px){
-      .grid{grid-template-columns:1fr}
-      .chart{height:360px}
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kobe Bryant · 9:45之后——坠机事件中的风险链条</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+:root {
+  --bg-deep: #060a14;
+  --bg-panel: #0d1228;
+  --bg-card: #111834;
+  --border: #1c2750;
+  --border-accent: #2a3870;
+  --text: #e8edf5;
+  --text-dim: #99a8c4;
+  --text-muted: #5c6a8a;
+  --gold: #f5b042;
+  --gold-glow: rgba(245,176,66,.20);
+  --purple: #7c3aed;
+  --purple-glow: rgba(124,58,237,.18);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,.12);
+  --amber: #f59e0b;
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: .4s cubic-bezier(.4,0,.2,1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
+  overflow-x: hidden;
+}
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--purple), var(--gold));
+  z-index: 1000; transition: width .12s linear;
+}
+#side-nav {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  z-index: 900; display: flex; flex-direction: column; gap: 16px;
+}
+#side-nav a {
+  display: block; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--border-accent); transition: var(--transition);
+  text-decoration: none; position: relative;
+}
+#side-nav a.active, #side-nav a:hover {
+  background: var(--gold); box-shadow: 0 0 12px var(--gold-glow);
+  transform: scale(1.3);
+}
+#side-nav a span {
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap; font-size: 12px; color: var(--text-dim);
+  opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+#side-nav a:hover span { opacity: 1; }
+
+.hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: var(--bg-deep);
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(90deg, rgba(6,10,20,.98) 0%, rgba(6,10,20,.86) 42%, rgba(6,10,20,.54) 72%, rgba(6,10,20,.88) 100%),
+    linear-gradient(180deg, rgba(239,68,68,.10) 0%, rgba(6,10,20,0) 32%, rgba(245,176,66,.08) 100%);
+}
+.hero-img-wrap {
+  position: absolute; right: max(-6%, -60px); top: 50%; transform: translateY(-50%);
+  width: min(58%, 720px); z-index: 1; opacity: .85;
+  mask-image: radial-gradient(ellipse 75% 65% at 40% 50%, black 55%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 40% 50%, black 55%, transparent 95%);
+}
+.hero-img-wrap img {
+  width: 100%; display: block; filter: saturate(.85) contrast(1.08);
+}
+.hero-grid-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(28,39,80,.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,39,80,.25) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 70%);
+}
+.hero-content {
+  position: relative; z-index: 2; text-align: left;
+  max-width: 520px; padding: 40px 32px; margin-right: auto; margin-left: max(5%, 40px);
+}
+.hero-content .jersey {
+  display: inline-flex; gap: 10px; margin-bottom: 20px;
+}
+.hero-content .jersey span {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  font-weight: 800; font-size: 18px;
+}
+.hero-content .jersey .n8  { background: var(--gold); color: #1a1a2e; }
+.hero-content .jersey .n24 { background: var(--purple); color: #e8edf5; }
+.hero-content .name-tag {
+  font-size: 13px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 12px;
+}
+.hero-content h1 {
+  font-size: clamp(32px, 3.4rem, 52px); font-weight: 800;
+  line-height: 1.18; letter-spacing: 0; margin-bottom: 16px;
+  color: var(--text);
+}
+.hero-content h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 0%, #fcd34d 50%, #fbbf24 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-content .lead {
+  font-size: 17px; color: var(--text-dim); line-height: 1.8; margin-bottom: 24px;
+}
+.hero-content .meta-row {
+  display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted);
+}
+.hero-content .meta-row .sep { color: var(--border-accent); }
+.hero-scroll {
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.hero-scroll .mouse {
+  width: 26px; height: 40px; border: 2px solid var(--text-muted);
+  border-radius: 14px; position: relative;
+}
+.hero-scroll .mouse::after {
+  content: ""; width: 4px; height: 8px; background: var(--gold);
+  border-radius: 2px; position: absolute; left: 9px; top: 7px;
+  animation: scrollWheel 1.6s ease infinite;
+}
+@keyframes scrollWheel {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(10px); opacity: .3; }
+}
+.hero-scroll .label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+
+.kobe-bio {
+  position: relative; overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.kobe-bio-inner {
+  max-width: 1100px; margin: 0 auto; padding: 80px 24px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+}
+.kobe-bio-text h2 {
+  font-size: clamp(26px, 3.5vw, 36px); font-weight: 700; margin-bottom: 20px;
+  line-height: 1.25; white-space: nowrap;
+}
+.kobe-bio-text h2 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold), #fcd34d);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.kobe-bio-text .bio-lead {
+  font-size: 17px; color: var(--text-dim); line-height: 1.9; margin-bottom: 28px;
+}
+.kobe-achievements {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.achv {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 18px 16px; text-align: center;
+  transition: var(--transition);
+}
+.achv:hover { border-color: var(--gold); }
+.achv .num {
+  font-size: 28px; font-weight: 800;
+  background: linear-gradient(135deg, var(--gold), #fcd34d);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.achv .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.kobe-bio-visual { position: relative; }
+.kobe-bio-visual .img-frame {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 40px rgba(124,58,237,.10);
+}
+.kobe-bio-visual img {
+  width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover;
+}
+.kobe-bio-visual .quote-float {
+  position: absolute; bottom: -20px; left: -20px; right: -20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px 20px;
+  font-size: 14px; color: var(--text-dim); line-height: 1.7;
+}
+.kobe-bio-visual .quote-float::before {
+  content: '\201C';
+  position: absolute; top: -18px; left: 16px;
+  font-size: 40px; color: var(--gold); font-weight: 800; line-height: 1;
+}
+
+.section {
+  max-width: 1100px; margin: 0 auto; padding: 80px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-of-type { border-bottom: none; }
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-num {
+  font-size: 12px; letter-spacing: 4px; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.section-header h2 {
+  font-size: clamp(24px, 2rem, 32px); font-weight: 700;
+  letter-spacing: 0; margin-bottom: 10px;
+  color: var(--text); white-space: nowrap;
+}
+.section-header .desc { color: var(--text-dim); max-width: 600px; margin: 0 auto; font-size: 15px; }
+.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+.content-grid.full { grid-template-columns: 1fr; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  transition: var(--transition);
+}
+.card:hover { border-color: var(--border-accent); box-shadow: 0 4px 24px rgba(0,0,0,.15); }
+.callout {
+  background: var(--bg-panel); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 20px 24px; margin: 20px 0;
+  font-size: 15px; color: var(--text-dim); line-height: 1.8;
+}
+.callout strong { color: var(--gold); }
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 28px 0; }
+.kpi {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px 18px; text-align: center;
+  transition: var(--transition);
+}
+.kpi:hover { border-color: var(--border-accent); }
+.kpi .label { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.kpi .value { font-size: 28px; font-weight: 700; }
+.kpi .unit { font-size: 13px; color: var(--text-dim); margin-left: 2px; }
+.insight-section {
+  max-width: 1180px; margin: 0 auto; padding: 72px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.insight-grid {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+  gap: 28px; align-items: stretch;
+}
+.summary-panel {
+  background: linear-gradient(180deg, rgba(17,24,52,.96), rgba(13,18,40,.96));
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 30px; min-height: 100%;
+}
+.summary-panel h2 {
+  font-size: 28px; line-height: 1.25; letter-spacing: 0; margin-bottom: 12px;
+}
+.summary-panel .summary-lead {
+  color: var(--text-dim); font-size: 16px; max-width: 66ch; margin-bottom: 22px;
+}
+.summary-kpis {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+}
+.summary-kpi {
+  background: rgba(6,10,20,.46); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 18px;
+}
+.summary-kpi .k { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.summary-kpi .v {
+  font-size: 22px; font-weight: 800; line-height: 1.2;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.evidence-stack { display: grid; gap: 14px; }
+.evidence-row {
+  display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: start;
+  padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+.evidence-row strong { color: var(--gold); font-size: 14px; }
+.evidence-row p { color: var(--text-dim); font-size: 14px; line-height: 1.68; }
+.chart-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.mini-timeline {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.mini-timeline div {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--red); border-radius: var(--radius-sm);
+  padding: 16px; min-height: 120px;
+}
+.mini-timeline strong { display: block; color: var(--gold); margin-bottom: 8px; }
+.map-note {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px;
+}
+.map-note div {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px; color: var(--text-dim); font-size: 14px;
+}
+.map-note strong { color: var(--text); display: block; margin-bottom: 4px; }
+.chart-box {
+  width: 100%; height: 420px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.v-timeline { position: relative; padding-left: 28px; }
+.v-timeline::before {
+  content: ""; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(180deg, var(--green), var(--amber), var(--red));
+  border-radius: 1px;
+}
+.tl-event {
+  position: relative; padding: 16px 18px; margin-bottom: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); transition: var(--transition);
+}
+.tl-event:hover { border-color: var(--border-accent); }
+.tl-event::before {
+  content: ""; position: absolute; left: -24px; top: 20px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--bg-deep); border: 2px solid var(--gold);
+}
+.tl-event .time { font-size: 13px; color: var(--gold); font-weight: 600; margin-bottom: 4px; }
+.tl-event .detail { font-size: 14px; color: var(--text-dim); }
+.tag {
+  display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 999px;
+  margin-left: 8px; font-weight: 600; letter-spacing: .5px;
+}
+.tag-low { background: rgba(34,197,94,.12); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+.tag-mid { background: rgba(245,158,11,.12); color: var(--amber); border: 1px solid rgba(245,158,11,.3); }
+.tag-high { background: rgba(239,68,68,.12); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+.photos-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.photos-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.photo-frame {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px; overflow: hidden;
+  transition: var(--transition);
+}
+.photo-frame:hover { border-color: var(--border-accent); }
+.photo-frame img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover;
+  border-radius: 6px; display: block; background: var(--bg-panel);
+}
+.photo-frame .caption { font-size: 12px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+.photos-4 img {
+  width: 100%; height: 200px; object-fit: cover;
+  border-radius: 6px; border: 1px solid var(--border); background: var(--bg-panel);
+  transition: var(--transition);
+}
+.photos-4 img:hover { border-color: var(--border-accent); opacity: .9; }
+.pilot-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 32px; align-items: start; }
+.pilot-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.pilot-card h3 { font-size: 18px; margin-bottom: 16px; color: var(--text); }
+.pilot-card ul { list-style: none; }
+.pilot-card li {
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  font-size: 14px; color: var(--text-dim);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.pilot-card li:last-child { border-bottom: none; }
+.pilot-card li strong { color: var(--text); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th {
+  text-align: left; padding: 14px 18px; background: var(--bg-panel);
+  color: var(--text-dim); font-weight: 600; font-size: 12px;
+  letter-spacing: .5px; text-transform: uppercase;
+  border-bottom: 2px solid var(--border-accent);
+}
+.data-table td {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.data-table tr:hover td { background: rgba(245,176,66,.03); }
+.blockquote {
+  text-align: center; padding: 56px 24px; max-width: 680px; margin: 0 auto;
+}
+.blockquote p {
+  font-size: 22px; font-weight: 600; line-height: 1.7;
+  background: linear-gradient(135deg, #e8edf5, #c4b5fd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+footer {
+  text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 13px;
+  border-top: 1px solid var(--border);
+}
+footer .name { color: var(--gold); font-weight: 600; }
+
+@media (max-width: 860px) {
+  #side-nav { display: none; }
+  .hero-content { max-width: 100%; margin: 0 20px; text-align: center; }
+  .hero-content .jersey { justify-content: center; }
+  .hero-content .meta-row { justify-content: center; }
+  .hero-img-wrap { display: none; }
+  .kobe-bio-inner { grid-template-columns: 1fr; gap: 36px; }
+  .content-grid, .pilot-grid, .photos-2, .insight-grid, .chart-pair { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .photos-4 { grid-template-columns: 1fr 1fr; }
+  .chart-box { height: 320px; }
+  .section { padding: 56px 18px; }
+  .insight-section { padding: 56px 18px; }
+  .mini-timeline, .map-note { grid-template-columns: 1fr 1fr; }
+  .kobe-achievements { grid-template-columns: 1fr 1fr; }
+  .kobe-bio-visual .quote-float { position: relative; bottom: auto; left: auto; right: auto; margin-top: 16px; }
+}
+@media (max-width: 480px) {
+  .kpi-row, .kobe-achievements, .summary-kpis, .mini-timeline, .map-note { grid-template-columns: 1fr; }
+  .photos-2, .photos-4 { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <header class="hero">
-    <h1>9:45之后：一场可以被预见的坠毁</h1>
-    <p class="sub">风速超限、能见度骤降、决策延迟——风险如何在30分钟内失控？</p>
-  </header>
+<div id="progress-bar"></div>
 
-  <section>
-    <h2>核心结论</h2>
-    <p class="lead">事故并非“瞬间发生”，而是风险在连续累积后穿越安全阈值。</p>
-    <div class="grid">
-      <div class="card"><div class="k">风险累积时间</div><div class="v info">约 30 分钟</div></div>
-      <div class="card"><div class="k">关键失控窗口</div><div class="v danger">最后 90 秒</div></div>
-      <div class="card"><div class="k">环境复杂度</div><div class="v warn">超过安全阈值</div></div>
-      <div class="card"><div class="k">决策因素</div><div class="v danger">存在延迟</div></div>
+<nav id="side-nav">
+  <a href="#hero" class="active"><span>开篇</span></a>
+  <a href="#summary"><span>先读结论</span></a>
+  <a href="#kobe"><span>科比其人</span></a>
+  <a href="#s1"><span>风险链</span></a>
+  <a href="#s2"><span>关键数据</span></a>
+  <a href="#s-map"><span>空间复现</span></a>
+  <a href="#s3"><span>现场影像</span></a>
+  <a href="#s4"><span>空间迷向</span></a>
+  <a href="#s5"><span>防线缺失</span></a>
+  <a href="#s6"><span>NTSB结论</span></a>
+  <a href="#s90"><span>最后90秒</span></a>
+  <a href="#s7"><span>缅怀</span></a>
+  <a href="#s8"><span>结语</span></a>
+</nav>
+
+<header class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-content">
+    <div class="jersey">
+      <span class="n8">8</span>
+      <span class="n24">24</span>
     </div>
-  </section>
+    <div class="name-tag">Kobe Bryant · 1978 – 2020</div>
+    <h1><em>9:45之后</em></h1>
+    <p class="lead">2020年1月26日，太平洋标准时间上午9:45左右，一架西科斯基S-76B直升机（注册号N72EX）在加州卡拉巴萨斯山区坠毁。机上九人全部遇难，包括科比·布莱恩特及其13岁的女儿吉安娜。NTSB历时一年的调查最终认定：事故的根源并非某个瞬间的机械故障，而是一条在42分钟内逐步收紧、终至不可挣脱的风险链条。</p>
+    <div class="meta-row">
+      <span>数据新闻 · 深度报道</span>
+      <span class="sep">·</span>
+      <span>崔鑫 · 3025004442</span>
+    </div>
+  </div>
+  <div class="hero-img-wrap">
+    <img src="assets/kobe.jpg" alt="Kobe Bryant" />
+  </div>
+  <div class="hero-scroll">
+    <div class="mouse"></div>
+    <span class="label">向下滚动</span>
+  </div>
+</header>
 
-  <section>
-    <h2>风险演化（时间 vs 风险指数）</h2>
-    <p class="lead">滚动到此处后曲线开始绘制，强调“逐步失控”而非“瞬时意外”。</p>
-    <div id="riskChart" class="chart reveal"></div>
-  </section>
+<section class="insight-section" id="summary">
+  <div class="insight-grid">
+    <div class="summary-panel">
+      <div class="section-num">At a glance</div>
+      <h2>先读结论：一场可以被预见的坠毁</h2>
+      <p class="summary-lead">风速超限、能见度骤降、决策延迟——风险如何在30分钟内失控？事故并非“瞬间发生”，而是风险在连续累积后穿越安全阈值。</p>
+      <div class="summary-kpis">
+        <div class="summary-kpi"><div class="k">风险累积时间</div><div class="v" style="color:var(--blue);">约30分钟</div></div>
+        <div class="summary-kpi"><div class="k">关键失控窗口</div><div class="v" style="color:var(--red);">最后90秒</div></div>
+        <div class="summary-kpi"><div class="k">环境复杂度</div><div class="v" style="color:var(--amber);">超过安全阈值</div></div>
+        <div class="summary-kpi"><div class="k">决策因素</div><div class="v" style="color:var(--red);">存在延迟</div></div>
+      </div>
+    </div>
+    <div class="evidence-stack">
+      <div class="evidence-row">
+        <strong>怎么失控</strong>
+        <p>滚动到风险曲线处后，风险指数与纠偏窗口同步呈现：一条上升，一条下滑，强调“逐步失控”而非“瞬时意外”。</p>
+      </div>
+      <div class="evidence-row">
+        <strong>看什么数</strong>
+        <p>关键参数不只看高度、速度、燃油，也要看安全值与事件值之间的差距。差距越大，说明系统离安全边界越远。</p>
+      </div>
+      <div class="evidence-row">
+        <strong>放到地图</strong>
+        <p>飞行路线、火场范围、风向与坠毁点的空间关系，能说明风险如何在地理空间中叠加。</p>
+      </div>
+      <div class="evidence-row">
+        <strong>追因果链</strong>
+        <p>环境、人为决策与设备缺口相互咬合，最终共同推向事故结果。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <section>
-    <h2>关键参数对比（安全值 vs 事件值）</h2>
-    <div id="paramChart" class="chart reveal"></div>
-  </section>
+<section class="kobe-bio" id="kobe">
+  <div class="kobe-bio-inner">
+    <div class="kobe-bio-text">
+      <h2><em>科比·布莱恩特</em>：1978—2020</h2>
+      <p class="bio-lead">
+        科比·布莱恩特（Kobe Bryant），1978年8月23日出生于美国费城，NBA历史上最伟大的球员之一。他职业生涯始终效力于洛杉矶湖人队，以近乎偏执的好胜心和极致的竞技水准定义了"<strong style="color:var(--gold);">曼巴精神</strong>"。
+      </p>
+      <p class="bio-lead">
+        20年职业生涯中，他两次获得总决赛MVP，一次常规赛MVP，18次入选全明星。2006年对阵多伦多猛龙的单场81分，至今仍是NBA历史第二高的个人得分纪录。退役后，他凭借动画短片《亲爱的篮球》获得奥斯卡最佳动画短片奖，成为史上首位获此奖项的NBA球员。
+      </p>
+      <div class="kobe-achievements">
+        <div class="achv"><div class="num">5</div><div class="label">NBA总冠军</div></div>
+        <div class="achv"><div class="num">81</div><div class="label">单场最高得分</div></div>
+        <div class="achv"><div class="num">18</div><div class="label">全明星入选</div></div>
+        <div class="achv"><div class="num">33,643</div><div class="label">生涯总得分</div></div>
+      </div>
+      <p class="bio-lead" style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border);">
+        2020年1月26日上午，科比与13岁的二女儿吉安娜（Gianna）搭乘直升机前往千橡市参加一场青少年篮球赛。退役后的科比将大量时间倾注在女儿的训练与比赛中，而直升机通勤是他多年来的惯常选择——洛杉矶的地面交通实在太堵了。没有人料到，这趟再普通不过的周日行程，会在42分钟后以无人能够接受的方式画上句号。
+      </p>
+    </div>
+    <div class="kobe-bio-visual">
+      <div class="img-frame">
+        <img src="assets/kobe.jpg" alt="Kobe Bryant" />
+      </div>
+      <div class="quote-float">
+        "那些你早起努力的日子，那些你熬夜奋斗的时光，那些你太累了不想再逼迫自己却依然坚持的夜晚——那才是梦想。"
+      </div>
+    </div>
+  </div>
+</section>
 
-  <section id="flight-map-section">
-    <h2>飞行路径与空间复现</h2>
-    <p class="lead">飞行路线、火场范围、风向与坠毁点的空间关系，可视化“风险如何在地理空间中叠加”。</p>
-    <div id="flightMapChart" class="chart reveal"></div>
-  </section>
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">Section 01</div>
+    <h2>42分钟：风险如何逐级累积</h2>
+    <p class="desc">起飞决策、空域等待、低能见度飞行——风险在多个节点叠加，最终压缩了所有纠偏空间。</p>
+  </div>
+  <div class="content-grid">
+    <div>
+      <p>科比坠机事件从起飞到最终坠毁历时<strong style="color:var(--gold);">42分钟</strong>（09:06—09:45 PST），只看最后一刻，很容易归结为"突发故障"或"操作失误"；但拉开时间线再看，风险是逐节点累积起来的。</p>
+      <p>起飞决策本身就是一个预警信号——当天天气恶劣，<strong>洛杉矶警署的直升机部队已因此停飞</strong>，但科比的航班仍按计划起飞，任务压力压过了安全判断。随后因伯班克空域交通繁忙，直升机盘旋等待了<strong style="color:var(--amber);">11分钟</strong>（09:21—09:32）。这看似寻常，却打乱了飞行节奏，飞行员的心理负荷和时间压力在无声中堆高。</p>
+      <p>进入卡拉巴萨斯山区后，低能见度使飞行员失去外部视觉参考，随即陷入<strong style="color:var(--red);">空间迷向</strong>——内耳感觉与仪表读数发生冲突，他错误地认为飞机在爬升，而实际正在高速下降。最终直升机以约160节（296 km/h）的速度撞山，下降率超过4,000英尺/分钟。</p>
+      <div class="callout">
+        <strong>关键发现：</strong>风险并非由单一节点触发。任务压力、空域等待、天气恶化、生理极限——单看每一项都不足以致命，但当它们在42分钟内依次叠加，留给飞行员的纠偏空间便被迅速压缩至零。
+      </div>
+    </div>
+    <div class="chart-box" id="chart-risk"></div>
+  </div>
+  <div class="content-grid" style="margin-top:36px;">
+    <div class="v-timeline">
+      <div class="tl-event">
+        <div class="time">09:06 PST <span class="tag tag-low">低风险</span></div>
+        <div class="detail">从约翰·韦恩机场起飞。洛杉矶警署已因天气停飞直升机，但该航班仍按计划出发。</div>
+      </div>
+      <div class="tl-event">
+        <div class="time">09:21 – 09:27 <span class="tag tag-mid">中风险</span></div>
+        <div class="detail">伯班克空域盘旋等待11分钟。期间飞行员申请特殊目视飞行规则（SVFR）许可，暗示天气已处边缘状态。</div>
+      </div>
+      <div class="tl-event">
+        <div class="time">09:33 <span class="tag tag-mid">中高风险</span></div>
+        <div class="detail">空管提示飞行高度偏低。飞行员报告正在爬升至4000英尺以穿越云层。</div>
+      </div>
+      <div class="tl-event">
+        <div class="time">09:45 – 09:47 <span class="tag tag-high">极高风险</span></div>
+        <div class="detail">直升机高速撞山坠毁，机上九人全部遇难。911接到首个报警电话。</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
+      <h3 style="font-size:16px;margin-bottom:14px;color:var(--gold);">风险累积模型</h3>
+      <p style="font-size:14px;color:var(--text-dim);line-height:1.9;">
+        在高风险系统中，事故极少由单一因素触发。从起飞时的<strong style="color:var(--green);">任务压力</strong>，到空域<strong style="color:var(--amber);">等待延迟</strong>，再到山区<strong style="color:var(--red);">空间迷向</strong>，每一个节点都是安全边界上的一道裂缝。当它们依次叠加，系统便不可逆转地走向失控。
+      </p>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">
+        说明：公开资料中常见 09:45 / 09:47 两种分钟表述，本文统一用区间表达以减少误导。
+      </p>
+    </div>
+  </div>
+</section>
 
-  <section>
-    <h2>事故因果链（环境 → 人为 → 结果）</h2>
-    <div id="causeChart" class="chart reveal"></div>
-  </section>
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">Section 02</div>
+    <h2>四组数字，一条失控轨迹</h2>
+    <p class="desc">将四组关键数据并置，失控的轨迹便清晰浮现。</p>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">目标爬升高度</div><div class="value" style="color:var(--blue);">4,000<span class="unit">ft</span></div></div>
+    <div class="kpi"><div class="label">实际最大高度</div><div class="value" style="color:var(--amber);">2,300<span class="unit">ft</span></div></div>
+    <div class="kpi"><div class="label">撞击速度</div><div class="value" style="color:var(--red);">298<span class="unit">km/h</span></div></div>
+    <div class="kpi"><div class="label">残余燃油</div><div class="value" style="color:var(--text-dim);">~800<span class="unit">lb</span>（约363kg）</div></div>
+  </div>
+  <div class="content-grid">
+    <div class="chart-box" id="chart-params"></div>
+    <div>
+      <p>飞行员报告的目标爬升高度是<strong style="color:var(--blue);">4000英尺</strong>，意图是爬升至云层之上以恢复目视飞行条件。但实际达到的最大高度仅为<strong style="color:var(--amber);">2300英尺</strong>，始终未能突破云层。这近<strong>1700英尺的显著偏差</strong>表明，直升机从未进入预期的安全飞行状态。</p>
+      <p>撞击速度约<strong style="color:var(--red);">298公里/小时</strong>，残余燃油约<strong>800磅（363公斤）</strong>，共同勾勒出事故瞬间的物理图景：飞机以极高动能撞击地形，随即引发剧烈火灾。</p>
+      <p>将这四个数字放在一起，结论便清晰浮现：<strong>从高度偏差出现的那一刻起，纠偏的窗口便已迅速收窄，并在短时间内彻底关闭</strong>。</p>
+    </div>
+  </div>
+</section>
 
-  <section>
+<section class="section" id="s-map">
+  <div class="section-header">
+    <div class="section-num">Section 03</div>
+    <h2>空间复现与因果链</h2>
+    <p class="desc">把安全阈值、事件值、飞行路径、风向与因果链放到同一层逻辑里，风险从“数字”变成了可追踪的过程。</p>
+  </div>
+  <div class="chart-pair">
+    <div>
+      <div class="chart-box" id="chart-threshold"></div>
+      <div class="callout">
+        <strong>安全值 vs 事件值：</strong>风速、能见度风险、决策压力与修正窗口不再孤立存在；它们共同说明，事故发生前系统已经越过可控边界。
+      </div>
+    </div>
+    <div>
+      <div class="chart-box" id="chart-flight-map"></div>
+      <div class="map-note">
+        <div><strong>飞行路线</strong>从机场方向进入山区，路径逐步靠近高风险区域。</div>
+        <div><strong>火场与烟羽</strong>叠加在低能见度背景中，进一步削弱外部视觉参考。</div>
+        <div><strong>坠毁点</strong>位于风险集中区，说明地形、天气与决策窗口在空间上重合。</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:28px;">
+    <div class="chart-box" id="chart-cause-chain"></div>
+    <div class="callout">
+      <strong>事故因果链：</strong>环境恶化并不必然导致事故，人的判断延迟也不一定单独致命；真正危险的是多条风险线索同时收束，且缺少足够强的预警系统去打断链条。
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">Section 04</div>
+    <h2>最后的影像</h2>
+    <p class="desc">ALERTWildfire监控网络与地面摄像头在坠机前后捕捉到的画面。</p>
+  </div>
+  <div class="photos-2">
+    <div class="photo-frame">
+      <img src="assets/alertwildfire_0944.jpg" alt="ALERTWildfire 9:44">
+      <div class="caption">ALERTWildfire 监控摄像头 9:44 PST 画面</div>
+    </div>
+    <div class="photo-frame">
+      <img src="assets/ground_camera_last_frame.jpg" alt="Ground camera frame">
+      <div class="caption">地面监控最后帧画面</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">Section 05</div>
+    <h2>空间迷向：经验为何没能阻止坠毁</h2>
+    <p class="desc">8,577小时的飞行经验，在空间迷向面前依然脆弱——这是生理的铁律，而非技术的失败。</p>
+  </div>
+  <div class="pilot-grid">
+    <div class="photo-frame">
+      <img src="assets/zobayan.jpg" alt="Ara Zobayan" style="width:100%;height:auto;border-radius:6px;display:block;" />
+      <div class="caption">飞行员 Ara Zobayan · 总飞行时长8,577.2 小时</div>
+    </div>
+    <div class="pilot-card">
+      <h3>工作经验</h3>
+      <ul>
+        <li><span>总飞行时长</span> <strong>8,577.2 小时</strong></li>
+        <li><span>机型经验</span> <strong>Sikorsky S-76 系列</strong></li>
+        <li><span>任务类型</span> <strong>商务出行与短途接驳</strong></li>
+        <li><span>运行环境</span> <strong>洛杉矶复杂空域</strong></li>
+        <li><span>执照类型</span> <strong>商用直升机飞行员</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="content-grid" style="margin-top:36px;">
+    <div class="chart-box" id="chart-factors" style="height:360px;"></div>
+    <div style="align-self:center;">
+      <p>在围绕科比坠机事件的讨论中，飞行员的经验常被当作判断安全性的核心依据。然而问题的关键并不在此：<strong>经验能提升处置能力，却无法逾越人类感知系统在特定环境下的生理边界</strong>。</p>
+      <p>当直升机扎进低能见度云层、穿行于复杂山地之间时，飞行员借以判断飞行姿态的外部视觉参照会迅速消失。此时，大脑转而依赖前庭系统感知平衡，而前庭系统恰恰极易产生错觉，这便是<strong style="color:var(--red);">"空间迷向"</strong>。在这种状态下，即便是数千小时经验的飞行员，其内耳感受到的"爬升感"也可能与仪表盘的真实数据截然相反。这与技术或经验无关——它是人类生理感知的一道<strong>硬边界</strong>。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">Section 06</div>
+    <h2>三道缺席的防线</h2>
+    <p class="desc">FDR、CVR、TAWS——三项设备的缺席，既压缩了事故前的预警余地，也封堵了事故后的追溯路径。</p>
+  </div>
+  <div class="content-grid">
+    <div>
+      <p>科比坠机事件中有一个被反复讨论的技术细节：涉事的<strong>西科斯基 S-76B</strong> 直升机缺少三项关键设备——<strong style="color:var(--red);">飞行数据记录器（FDR）、驾驶舱语音记录器（CVR）和地形感知与警告系统（TAWS）</strong>。</p>
+      <p>FDR和CVR通常被称为"黑匣子"，它们的作用并非阻止事故，而是在事故发生后提供<strong>"可追溯"和"可解释"</strong>的能力。而TAWS则是一种主动防御工具，当地形逼近时发出警报，提供<strong style="color:var(--amber);">"可预警"</strong>的能力。</p>
+      <p>根据当时有效的FAA法规（14 CFR Part 91），这三项设备对这类运营并非强制要求。但NTSB在报告中明确指出，缺少它们意味着飞行中少了一道自动化的风险屏障；在事故发生后，调查团队被迫依赖雷达信号和地面监控图像拼凑事发经过，飞行员的最后认知与决策过程，自此成了无法复原的黑洞。</p>
+    </div>
+    <div class="chart-box" id="chart-equip"></div>
+  </div>
+  <div style="margin-top:32px;">
+    <table class="data-table">
+      <thead>
+        <tr><th>设备</th><th>理想配置</th><th>涉事机（NTSB报告）</th><th>影响</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>FDR · 飞行数据记录器</td><td>有</td><td style="color:var(--red);">无</td><td>飞参追溯受限，无法还原完整飞行参数</td></tr>
+        <tr><td>CVR · 驾驶舱语音记录器</td><td>有</td><td style="color:var(--red);">无</td><td>决策语境难还原，无法获知最后对话</td></tr>
+        <tr><td>TAWS · 地形感知与警告系统</td><td>有</td><td style="color:var(--red);">无</td><td>地形预警能力不足，缺少最后一道防线</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">Section 07</div>
+    <h2>NTSB定论：被忽视的多重风险</h2>
+    <p class="desc">NTSB历时一年调查，于2021年2月9日发布最终报告，系统梳理了事故的原因链条。</p>
+  </div>
+  <div class="content-grid">
+    <div>
+      <div class="callout" style="border-left-color:var(--red);margin-bottom:24px;">
+        <strong style="color:var(--red);">NTSB可能原因（Probable Cause）：</strong>飞行员在目视飞行规则条件下继续飞入仪表气象条件，继而发生空间迷向，最终失去对直升机的控制。
+      </div>
+      <p>NTSB报告（DCA20MA059）确认，飞行员Ara Zobayan在飞行过程中多次收到天气恶化的信息，且在伯班克空域曾申请SVFR许可——这表明他已意识到天气处于边缘状态。然而，他选择继续向山区飞行，而非备降或返航。</p>
+      <p>调查还确认了四项<strong>关键促成因素</strong>：</p>
+      <p>1. <strong style="color:var(--amber);">自诱导压力（Self-Induced Pressure）</strong>——飞行员对知名客户的承诺可能影响其判断，使他更倾向于"完成这趟飞行"而非将安全置于首位。</p>
+      <p>2. <strong style="color:var(--amber);">飞行计划审查不足</strong>——起飞前未充分评估沿途天气趋势，对山区气象的急剧恶化缺乏充分预案。</p>
+      <p>3. <strong style="color:var(--red);">空间迷向的生理不可抗拒性</strong>——即使是最有经验的飞行员，在缺乏外部视觉参考时，前庭系统产生的错觉也足以压倒仪表读数。</p>
+      <p>4. <strong style="color:var(--red);">缺乏关键安全设备</strong>——S-76B未配备FDR、CVR及TAWS，法规虽未强制要求，但同类事故的教训反复证明：这些设备能提供关键的预警和事后追溯能力。</p>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
+      <h3 style="font-size:16px;margin-bottom:14px;color:var(--gold);">NTSB安全建议摘要</h3>
+      <p style="font-size:14px;color:var(--text-dim);line-height:1.9;">NTSB向FAA提出了<strong style="color:var(--gold);">六项安全建议</strong>，其中包括：要求所有涡轮动力直升机配备飞行数据记录器、地形感知与警告系统；加强对飞行员意外进入IMC情境下的模拟训练；以及改进气象信息在航空决策中的整合方式。</p>
+      <p style="font-size:14px;color:var(--text-dim);line-height:1.9;margin-top:12px;">报告同时指出，洛杉矶盆地复杂的地形与多变的气候模式，使得低空目视飞行面临极大的环境不确定性，建议FAA考虑在该区域推行更严格的最低气象标准。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s90">
+  <div class="section-header">
+    <div class="section-num">Section 08</div>
     <h2>最后90秒发生了什么？</h2>
-    <div class="timeline">
-      <div><strong>T-90s：</strong> 风险指数快速攀升，外部环境恶化。</div>
-      <div><strong>T-60s：</strong> 操作空间显著缩小，修正窗口变窄。</div>
-      <div><strong>T-30s：</strong> 决策余地接近消失，系统进入高危区。</div>
-      <div><strong>T-0s：</strong> 错误链条未被阻断，事故发生。</div>
+    <p class="desc">最后阶段不是孤立的“突然坠落”，而是风险指数快速攀升、操作空间快速消失的压缩过程。</p>
+  </div>
+  <div class="mini-timeline">
+    <div><strong>T-90s</strong>风险指数快速攀升，外部环境恶化。</div>
+    <div><strong>T-60s</strong>操作空间显著缩小，修正窗口变窄。</div>
+    <div><strong>T-30s</strong>决策余地接近消失，系统进入高危区。</div>
+    <div><strong>T-0s</strong>错误链条未被阻断，事故发生。</div>
+  </div>
+  <div class="callout" style="margin-top:24px;">
+    <strong>读法：</strong>最后90秒只是链条的显性崩塌点。真正值得被追问的，是为什么在此前30分钟里，系统没有停下来、绕开、返航或获得足够强的自动预警。
+  </div>
+</section>
+
+<section class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">Section 09</div>
+    <h2>一座城市，全世界的告别</h2>
+    <p class="desc">斯台普斯中心外、费城市政厅、米兰街头壁画——科比不只属于洛杉矶。</p>
+  </div>
+  <div class="content-grid">
+    <div>
+      <p>2020年1月26日消息传来时，很多人第一反应是拒绝相信。社交媒体上最先出现的是震惊和问号，随后才被漫长的沉默与哭泣取代。</p>
+      <p>洛杉矶斯台普斯中心外，球迷自发聚集，有人摆放鲜花、科比球衣和篮球，有人只是站在那里仰望球馆上空的退役球衣。那一夜，<strong style="color:var(--purple);">紫色和金色的灯光</strong>照亮了整座城市，仿佛在为那个骤然断裂的时代默哀。</p>
+      <p>费城市政厅点亮了紫金灯光，意大利米兰的街头出现了手绘巨幅壁画，中国球迷在凌晨守候直播，将8号和24号刷满了网络屏幕。没有统一的仪式，却有着共同的感受——他不仅仅是篮球运动员，更是许多人青春里关于<strong style="color:var(--gold);">努力、偏执与热爱</strong>的象征。</p>
     </div>
-  </section>
+    <div class="photos-4">
+      <img src="assets/memorial_1.jpg" alt="memorial 1">
+      <img src="assets/memorial_2.jpg" alt="memorial 2">
+      <img src="assets/memorial_3.jpg" alt="memorial 3">
+      <img src="assets/memorial_4.jpg" alt="memorial 4">
+    </div>
+  </div>
+</section>
 
-  <section>
-    <h2>结论</h2>
-    <p>多因素叠加导致风险指数失控；决策延迟放大事故概率；缺乏有效预警使纠错失败。</p>
-    <p class="footer-quote">事故不是偶然，而是一个系统逐步走向失控的过程。</p>
-  </section>
+<section class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">Section 10</div>
+    <h2>结语</h2>
+  </div>
+  <div class="blockquote">
+    <p>"缅怀科比，不只是记住后仰跳投和81分之夜，也是从他离去的方式中，学会更清醒地面对安全、责任与生命的边界。"</p>
+  </div>
+  <div style="max-width:720px;margin:0 auto;">
+    <p>这场事故不只是一场令人心碎的意外，更是一面镜子，映照出我们理解复杂事件时的认知盲点。公众很容易将其归因为某一次失误或某一刻的坏运气，但如果拉长时间线，会发现风险早已在起飞决策、空域等待、低能见度飞行和缺失的设备中层层叠加。</p>
+    <p>科比和吉安娜的离去令人痛心，但更深层的遗憾在于：那些被忽视的系统缺口，原本都可以被提前填补。缅怀的意义，不只是记住一个人曾如何活着，也包括从他离去的方式中，学会更清醒地面对安全、责任与生命的边界。斯台普斯中心的灯光终有一日会熄灭，但那些因这场事故而起身反思、动手修补系统缺口的人，会将这份意义传递下去。</p>
+    <p>多因素叠加导致风险指数失控；决策延迟放大事故概率；缺乏有效预警使纠错失败。事故不是偶然，而是一个系统逐步走向失控的过程。</p>
+  </div>
+</section>
 
-  <script src="./main.js"></script>
+<footer>
+  <p>数据新闻 · <span class="name">崔鑫 · 3025004442</span></p>
+  <p style="margin-top:4px;">数据来源：NTSB Aviation Investigation Report DCA20MA059 (2021.02.09) · FAA 14 CFR Part 91 &amp; Part 135 · 洛杉矶时报报道 · 公开气象数据综合整理</p>
+</footer>
+<script>
+(function() {
+  const theme = {
+    textStyle: { color: '#99a8c4' },
+    axisLine: { lineStyle: { color: '#1c2750' } },
+    splitLine: { lineStyle: { color: '#182040' } },
+    legend: { textStyle: { color: '#99a8c4' } }
+  };
+  function applyTheme(opt) {
+    return Object.assign({ backgroundColor: 'transparent', textStyle: theme.textStyle }, opt);
+  }
+
+  // 1. Risk Evolution
+  (function() {
+    var dom = document.getElementById('chart-risk');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var option = applyTheme({
+      title: { text: '风险指数演化', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { trigger: 'axis', backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      legend: { data: ['风险指数', '纠偏窗口'], bottom: 8, textStyle: { color: '#99a8c4' } },
+      grid: { left: '8%', right: '6%', top: '18%', bottom: '14%' },
+      xAxis: {
+        type: 'category',
+        data: ['09:06\n起飞', '09:15', '09:21\n等待', '09:27\n转场', '09:33\n警告', '09:39', '09:45\n坠机'],
+        axisLabel: { fontSize: 11, color: '#99a8c4' },
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        axisTick: { show: false }
+      },
+      yAxis: [
+        {
+          type: 'value', name: '风险指数', min: 0, max: 100,
+          splitLine: { lineStyle: { color: '#182040' } },
+          axisLine: { lineStyle: { color: '#1c2750' } },
+          axisLabel: { fontSize: 11, color: '#99a8c4' }
+        },
+        {
+          type: 'value', name: '窗口(%)', min: 0, max: 100,
+          splitLine: { show: false },
+          axisLine: { lineStyle: { color: '#1c2750' } },
+          axisLabel: { fontSize: 11, color: '#99a8c4' }
+        }
+      ],
+      series: [
+        {
+          name: '风险指数', type: 'line', yAxisIndex: 0, smooth: true,
+          data: [5, 18, 35, 52, 72, 88, 100],
+          lineStyle: { width: 3, color: '#ef4444' },
+          itemStyle: { color: '#ef4444' },
+          areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[
+            {offset:0, color:'rgba(239,68,68,.25)'}, {offset:1, color:'rgba(239,68,68,0)'}
+          ])},
+          markLine: {
+            silent: true,
+            data: [{ yAxis: 70, label: { formatter: '临界阈值', color: '#f59e0b' }, lineStyle: { color: '#f59e0b', type: 'dashed', width: 2 } }],
+            symbol: 'none'
+          }
+        },
+        {
+          name: '纠偏窗口', type: 'line', yAxisIndex: 1, smooth: true,
+          data: [95, 88, 72, 55, 35, 15, 0],
+          lineStyle: { width: 2, color: '#22c55e', type: 'dashed' },
+          itemStyle: { color: '#22c55e' },
+          areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1,[
+            {offset:0, color:'rgba(34,197,94,.12)'}, {offset:1, color:'rgba(34,197,94,0)'}
+          ])}
+        }
+      ]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); }
+    });
+    obs.observe(dom);
+  })();
+
+  // 2. Parameter Comparison — normalized as percentage of reference
+  (function() {
+    var dom = document.getElementById('chart-params');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var cats = ['爬升高度', '撞击速度', '残余燃油', '能见度'];
+    var option = applyTheme({
+      title: { text: '关键参数达成率（参考值 = 100%）', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#0d1228',
+        borderColor: '#2a3870',
+        textStyle: { color: '#e8edf5' },
+        formatter: function(params) {
+          var labels = ['目标 4,000 ft / 实际 2,300 ft', '安全阈值 ~160 km/h / 实际 298 km/h', '典型余量 ~300 lb / 实际 ~800 lb', 'VFR最低 3 英里 / 实际 ~1 英里'];
+          var i = params[0].dataIndex;
+          return '<strong>' + params[0].name + '</strong><br/>' +
+            '达成率：<b style="color:' + params[0].color + '">' + params[0].value + '%</b><br/>' +
+            '<span style="font-size:12px;color:#99a8c4">' + labels[i] + '</span>';
+        }
+      },
+      grid: { left: '12%', right: '8%', top: '18%', bottom: '14%' },
+      xAxis: {
+        type: 'category', data: cats,
+        axisLabel: { fontSize: 12, color: '#99a8c4', fontWeight: 500 },
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        axisTick: { show: false }
+      },
+      yAxis: {
+        type: 'value', name: '%', max: 300,
+        splitLine: { lineStyle: { color: '#182040' } },
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        axisLabel: { fontSize: 11, color: '#99a8c4', formatter: '{value}%' }
+      },
+      series: [{
+        name: '达成率', type: 'bar',
+        data: [
+          { value: 57.5, itemStyle: { color: '#ef4444' } },
+          { value: 186,  itemStyle: { color: '#ef4444' } },
+          { value: 267,  itemStyle: { color: '#3b82f6' } },
+          { value: 33,   itemStyle: { color: '#ef4444' } }
+        ],
+        barWidth: '44%',
+        borderRadius: [4, 4, 0, 0],
+        label: {
+          show: true, position: 'top',
+          color: '#e8edf5', fontSize: 12, fontWeight: 600,
+          formatter: '{c}%'
+        },
+        markLine: {
+          silent: true, symbol: 'none',
+          label: { formatter: '参考值 100%', color: '#f5b042', fontSize: 11 },
+          lineStyle: { color: '#f5b042', type: 'dashed', width: 2 },
+          data: [{ yAxis: 100 }]
+        }
+      }]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // 3. Safety Threshold vs Event Value
+  (function() {
+    var dom = document.getElementById('chart-threshold');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var option = applyTheme({
+      title: { text: '关键参数对比：安全值 vs 事件值', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      legend: { top: 42, textStyle: { color: '#99a8c4' } },
+      grid: { left: '11%', right: '6%', top: '24%', bottom: '12%' },
+      xAxis: {
+        type: 'category',
+        data: ['风速', '能见度风险', '决策压力', '修正窗口'],
+        axisLabel: { fontSize: 11, color: '#99a8c4' },
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        axisTick: { show: false }
+      },
+      yAxis: {
+        type: 'value', max: 100,
+        splitLine: { lineStyle: { color: '#182040' } },
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        axisLabel: { fontSize: 11, color: '#99a8c4' }
+      },
+      series: [
+        { name: '安全值', type: 'bar', data: [45, 35, 40, 72], itemStyle: { color: '#3b82f6', borderRadius: [4,4,0,0] }, barWidth: '28%' },
+        { name: '事件值', type: 'bar', data: [82, 88, 80, 18], itemStyle: { color: '#ef4444', borderRadius: [4,4,0,0] }, barWidth: '28%' }
+      ]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // 4. Flight Path Spatial Reconstruction
+  (function() {
+    var dom = document.getElementById('chart-flight-map');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var option = applyTheme({
+      title: { text: '飞行路径与空间复现', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { trigger: 'item', backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      grid: { left: 12, right: 12, top: 52, bottom: 12 },
+      xAxis: { min: 0, max: 100, show: false },
+      yAxis: { min: 0, max: 100, show: false },
+      series: [
+        {
+          name: '风险区域',
+          type: 'effectScatter',
+          coordinateSystem: 'cartesian2d',
+          data: [
+            { name: '低云浓雾区', value: [64, 58, 88] },
+            { name: '火场烟羽范围', value: [48, 45, 72] }
+          ],
+          symbolSize: function(value) { return value[2]; },
+          rippleEffect: { scale: 2.4, brushType: 'stroke' },
+          itemStyle: { color: 'rgba(239,68,68,.42)' },
+          z: 1
+        },
+        {
+          name: '飞行路径',
+          type: 'lines',
+          coordinateSystem: 'cartesian2d',
+          polyline: true,
+          lineStyle: { color: '#3b82f6', width: 4, curveness: .2 },
+          effect: { show: true, symbol: 'arrow', symbolSize: 10, color: '#e8edf5', period: 5 },
+          data: [{ coords: [[10, 76], [28, 70], [45, 62], [58, 52], [70, 38], [78, 27]] }],
+          z: 3
+        },
+        {
+          name: '关键点',
+          type: 'scatter',
+          coordinateSystem: 'cartesian2d',
+          symbolSize: function(value) { return value[2]; },
+          label: { show: true, formatter: '{b}', color: '#e8edf5', position: 'top', fontSize: 11 },
+          itemStyle: { color: '#f5b042' },
+          data: [
+            { name: '起飞方向', value: [10, 76, 14] },
+            { name: '决策延迟区', value: [58, 52, 18] },
+            { name: '坠毁点', value: [78, 27, 22], itemStyle: { color: '#ef4444' } }
+          ],
+          z: 4
+        },
+        {
+          name: '风向',
+          type: 'lines',
+          coordinateSystem: 'cartesian2d',
+          lineStyle: { color: '#f59e0b', width: 2, type: 'dashed' },
+          effect: { show: true, symbol: 'arrow', symbolSize: 8, color: '#f59e0b', period: 4 },
+          data: [
+            { coords: [[24, 30], [54, 48]] },
+            { coords: [[38, 20], [68, 38]] },
+            { coords: [[52, 12], [82, 30]] }
+          ],
+          z: 2
+        }
+      ]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // 5. Cause Chain
+  (function() {
+    var dom = document.getElementById('chart-cause-chain');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var option = applyTheme({
+      title: { text: '事故因果链：环境 → 人为 → 结果', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { trigger: 'item', backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      series: [{
+        type: 'graph',
+        layout: 'none',
+        roam: false,
+        symbolSize: 70,
+        label: { show: true, color: '#e8edf5', fontSize: 12 },
+        edgeSymbol: ['none', 'arrow'],
+        edgeSymbolSize: [0, 10],
+        lineStyle: { color: '#3b82f6', width: 2, curveness: .12 },
+        data: [
+          { name: '低能见度', x: 80, y: 120, itemStyle: { color: '#3b82f6' } },
+          { name: '风速超限', x: 80, y: 260, itemStyle: { color: '#f59e0b' } },
+          { name: '风险累积', x: 290, y: 190, itemStyle: { color: '#7c3aed' } },
+          { name: '决策延迟', x: 500, y: 190, itemStyle: { color: '#f59e0b' } },
+          { name: '纠错失败', x: 700, y: 190, itemStyle: { color: '#ef4444' } },
+          { name: '事故发生', x: 890, y: 190, itemStyle: { color: '#ef4444' } }
+        ],
+        links: [
+          { source: '低能见度', target: '风险累积' },
+          { source: '风速超限', target: '风险累积' },
+          { source: '风险累积', target: '决策延迟' },
+          { source: '决策延迟', target: '纠错失败' },
+          { source: '纠错失败', target: '事故发生' }
+        ]
+      }]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // 6. Causal Factors Radar
+  (function() {
+    var dom = document.getElementById('chart-factors');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var option = applyTheme({
+      title: { text: '事故因素贡献度分析', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      legend: { bottom: 8, textStyle: { color: '#99a8c4' } },
+      radar: {
+        center: ['50%', '55%'], radius: '62%', axisName: { color: '#99a8c4', fontSize: 11 },
+        indicator: [
+          { name: '天气/能见度', max: 100 }, { name: '地形复杂', max: 100 }, { name: '认知负荷', max: 100 },
+          { name: '任务压力', max: 100 }, { name: '空域运行', max: 100 }, { name: '设备缺口', max: 100 }
+        ],
+        axisLine: { lineStyle: { color: '#1c2750' } },
+        splitLine: { lineStyle: { color: '#182040' } },
+        splitArea: { areaStyle: { color: ['rgba(124,58,237,.03)', 'rgba(124,58,237,.06)'] } }
+      },
+      series: [{ type: 'radar', data: [{ value: [90, 75, 70, 65, 55, 85], name: '贡献度',
+        areaStyle: { color: 'rgba(239,68,68,.2)' }, lineStyle: { color: '#ef4444', width: 2 },
+        itemStyle: { color: '#ef4444' }, symbolSize: 6
+      }] }]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // 4. Equipment Gap
+  (function() {
+    var dom = document.getElementById('chart-equip');
+    if (!dom) return;
+    var chart = echarts.init(dom);
+    var cats = ['FDR\n飞行数据记录', 'CVR\n语音记录', 'TAWS\n地形预警'];
+    var option = applyTheme({
+      title: { text: '设备配置对比', left: 'center', top: 14, textStyle: { color: '#e8edf5', fontSize: 15, fontWeight: 600 } },
+      tooltip: { trigger: 'axis', backgroundColor: '#0d1228', borderColor: '#2a3870', textStyle: { color: '#e8edf5' } },
+      legend: { bottom: 8, textStyle: { color: '#99a8c4' } },
+      grid: { left: '8%', right: '6%', top: '18%', bottom: '14%' },
+      xAxis: { type: 'category', data: cats, axisLabel: { fontSize: 11, color: '#99a8c4' }, axisLine: { lineStyle: { color: '#1c2750' } }, axisTick: { show: false } },
+      yAxis: { type: 'value', name: '配置率 (%)', max: 120, splitLine: { lineStyle: { color: '#182040' } }, axisLine: { lineStyle: { color: '#1c2750' } }, axisLabel: { fontSize: 11, color: '#99a8c4' } },
+      series: [
+        { name: '行业标准', type: 'bar', data: [100, 100, 100], itemStyle: { color: '#3b82f6', borderRadius: [4,4,0,0] }, barWidth: '28%', barGap: '30%' },
+        { name: '涉事机 S-76B', type: 'bar', data: [0, 0, 0], itemStyle: { color: '#ef4444', borderRadius: [4,4,0,0] }, barWidth: '28%',
+          label: { show: true, position: 'top', color: '#ef4444', fontSize: 13, fontWeight: 700, formatter: '缺失' } }
+      ]
+    });
+    chart.setOption(option);
+    window.addEventListener('resize', function() { chart.resize(); });
+    var obs = new IntersectionObserver(function(entries) { if (entries[0].isIntersecting) { chart.resize(); obs.disconnect(); } });
+    obs.observe(dom);
+  })();
+
+  // Scroll: Progress Bar & Side Nav
+  (function() {
+    var sections = document.querySelectorAll('.section, .hero, .insight-section, .kobe-bio');
+    var navLinks = document.querySelectorAll('#side-nav a');
+    var progressBar = document.getElementById('progress-bar');
+    function update() {
+      var scrollTop = window.scrollY;
+      var docH = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docH > 0 ? Math.min(100, (scrollTop / docH) * 100) : 0;
+      if (progressBar) progressBar.style.width = pct + '%';
+      var current = '';
+      sections.forEach(function(sec) {
+        var top = sec.offsetTop - 200;
+        if (scrollTop >= top) current = sec.id;
+      });
+      navLinks.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+})();
+</script>
 </body>
 </html>
