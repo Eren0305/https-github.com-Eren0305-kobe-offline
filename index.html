@@ -75,15 +75,6 @@ body {
     linear-gradient(90deg, rgba(6,10,20,.98) 0%, rgba(6,10,20,.86) 42%, rgba(6,10,20,.54) 72%, rgba(6,10,20,.88) 100%),
     linear-gradient(180deg, rgba(239,68,68,.10) 0%, rgba(6,10,20,0) 32%, rgba(245,176,66,.08) 100%);
 }
-.hero-img-wrap {
-  position: absolute; right: max(-6%, -60px); top: 50%; transform: translateY(-50%);
-  width: min(58%, 720px); z-index: 1; opacity: .85;
-  mask-image: radial-gradient(ellipse 75% 65% at 40% 50%, black 55%, transparent 95%);
-  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 40% 50%, black 55%, transparent 95%);
-}
-.hero-img-wrap img {
-  width: 100%; display: block; filter: saturate(.85) contrast(1.08);
-}
 .hero-grid-bg {
   position: absolute; inset: 0; z-index: 0;
   background-image:
@@ -399,7 +390,6 @@ footer .name { color: var(--gold); font-weight: 600; }
   .hero-content { max-width: 100%; margin: 0 20px; text-align: center; }
   .hero-content .jersey { justify-content: center; }
   .hero-content .meta-row { justify-content: center; }
-  .hero-img-wrap { display: none; }
   .kobe-bio-inner { grid-template-columns: 1fr; gap: 36px; }
   .content-grid, .pilot-grid, .photos-2, .insight-grid, .chart-pair { grid-template-columns: 1fr; }
   .kpi-row { grid-template-columns: 1fr 1fr; }
@@ -452,9 +442,6 @@ footer .name { color: var(--gold); font-weight: 600; }
       <span class="sep">·</span>
       <span>崔鑫 · 3025004442</span>
     </div>
-  </div>
-  <div class="hero-img-wrap">
-    <img src="assets/kobe.jpg" alt="Kobe Bryant" />
   </div>
   <div class="hero-scroll">
     <div class="mouse"></div>
