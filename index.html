@@ -214,7 +214,13 @@ body {
   letter-spacing: 0; margin-bottom: 10px;
   color: var(--text); white-space: nowrap;
 }
-.section-header .desc { color: var(--text-dim); max-width: 600px; margin: 0 auto; font-size: 15px; }
+.section-header .desc {
+  color: var(--text-dim);
+  max-width: none;
+  margin: 0 auto;
+  font-size: 15px;
+  white-space: nowrap;
+}
 .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
 .content-grid.full { grid-template-columns: 1fr; }
 .card {
@@ -397,6 +403,10 @@ footer .name { color: var(--gold); font-weight: 600; }
   .chart-box { height: 320px; }
   .section { padding: 56px 18px; }
   .insight-section { padding: 56px 18px; }
+  .section-header .desc {
+    font-size: 14px;
+    white-space: normal;
+  }
   .mini-timeline, .map-note { grid-template-columns: 1fr 1fr; }
   .kobe-achievements { grid-template-columns: 1fr 1fr; }
   .kobe-bio-visual .quote-float { position: relative; bottom: auto; left: auto; right: auto; margin-top: 16px; }
